@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('analyzeButton').addEventListener('click', analyzeLinks);
-  document.getElementById('copyUrlButton').addEventListener('click', copyUrl); // Adding event listener for the copyUrl function
+  document.getElementById('copyUrlButton').addEventListener('click', copyUrl);
 });
 
 function analyzeLinks() {
@@ -14,8 +14,8 @@ function copyUrl() {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     var activeTab = tabs[0];
     var url = activeTab.url;
-    // Do something with the URL, if needed
-    console.log(url);
+
+    
   });
 }
 
