@@ -1,3 +1,5 @@
+# scanner.py
+from web_app import app
 import requests
 from bs4 import BeautifulSoup
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -54,29 +56,3 @@ if __name__ == "__main__":
     print("All Links:", all_links)
     print("Malicious Links:", malicious_links)
     print("Subscription/Unsubscription Links:", subscription_links)
-
-from flask import Flask, request, jsonify
-from model import classify_links, extract_links
-
-app = Flask(__name__)
-
-@app.route('/scan', methods=['POST'])
-def scan_url():
-    data = request.get_json()
-    url = data.get('url', '')
-
-    if not url:
-        return jsonify({'error': 'Invalid request'}), 400
-
-    links = extract_links(url)
-    malicious_links, subscription_links = classify_links(links)
-
-    result = {
-        'url': url,
-        'malicious_links': malicious_links,
-        'subscription_links': subscription_links
-    }
-
-    return jsonify(result)
-
-app.run(host='0.0.0.0', port=5000)
