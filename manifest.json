@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "Your Extension Name",
+  "name": "SubSlueth",
   "version": "1.0",
   "permissions": [
     "tabs",
