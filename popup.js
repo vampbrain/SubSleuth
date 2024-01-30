@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('analyzeButton').addEventListener('click', analyzeLinks);
-  document.getElementById('copyUrlButton').addEventListener('click', copyUrl); // Adding event listener for the copyUrl function
+  document.getElementById('copyUrlButton').addEventListener('click', copyUrl);
 });
 
 function analyzeLinks() {
@@ -25,15 +25,15 @@ function copyUrl() {
       // Save the updated list back to storage
       chrome.storage.local.set({ urls: urls }, function () {
         console.log('URL added:', url);
+        // Notify the background script to update the badge
+        chrome.runtime.sendMessage({ message: 'updateBadge' });
       });
     });
   });
 }
 
-chrome.runtime.onMessage.addListener(
-  function (request, sender, sendResponse) {
-    if (request.action === 'displayResult') {
-      document.getElementById('result').innerText = request.result;
-    }
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.action === 'displayResult') {
+    document.getElementById('result').innerText = request.result;
   }
-);
+});

@@ -5,8 +5,7 @@
   "permissions": [
     "tabs",
     "activeTab",
-    "http://*/*",  
-    "https://*/*"
+    "<all_urls>"
   ],
   "action": {
     "default_popup": "popup.html",
