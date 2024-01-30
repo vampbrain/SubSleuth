@@ -14,19 +14,8 @@ function copyUrl() {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     var activeTab = tabs[0];
     var url = activeTab.url;
-
-    // Retrieve existing URLs from storage
-    chrome.storage.local.get({ urls: [] }, function (data) {
-      var urls = data.urls;
-
-      // Add the current URL to the list
-      urls.push(url);
-
-      // Save the updated list back to storage
-      chrome.storage.local.set({ urls: urls }, function () {
-        console.log('URL added:', url);
-      });
-    });
+    // Do something with the URL, if needed
+    console.log(url);
   });
 }
 
