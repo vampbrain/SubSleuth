@@ -13,9 +13,7 @@ function analyzeLinks() {
 function copyUrl() {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     var activeTab = tabs[0];
-    var url = activeTab.url;
-
-    
+    console.log(activeTab.url);
   });
 }
 
