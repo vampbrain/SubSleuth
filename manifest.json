@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "SubSlueth",
+  "name": "SubSleuth",
   "version": "1.0",
   "permissions": [
     "tabs",
@@ -8,11 +8,7 @@
     "http://*/*",  
     "https://*/*"
   ],
-  "background": {
-    "scripts": ["background.js"],
-    "persistent": false
-  },
-  "browser_action": {
+  "action": {
     "default_popup": "popup.html",
     "default_icon": {
       "128": "logomain.png"
@@ -27,5 +23,8 @@
       "js": ["content.js"]
     }
   ],
-  "web_accessible_resources": ["content.js"]
+  "web_accessible_resources": ["content.js"],
+  "background": {
+    "service_worker": "background.js"
+  }
 }
