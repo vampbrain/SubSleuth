@@ -32,8 +32,10 @@ function copyUrl() {
   });
 }
 
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  if (request.action === 'displayResult') {
-    document.getElementById('result').innerText = request.result;
+chrome.runtime.onMessage.addListener(
+  function (request, sender, sendResponse) {
+    if (request.action === 'displayResult') {
+      document.getElementById('result').innerText = request.result;
+    }
   }
-});
+);
