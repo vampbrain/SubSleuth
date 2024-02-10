@@ -14,39 +14,13 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 import matplotlib.pyplot as plt
 import xgboost as xgb
-from lightgbm import LGBMClassifier
+
 import os
 import seaborn as sns
 from wordcloud import WordCloud
 from imblearn.over_sampling import SMOTE
 
-# Upload Kaggle API Key
-from google.colab import files
-files.upload()
-
-# Move the API key to the correct location
-!mkdir -p ~/.kaggle
-!mv kaggle.json ~/.kaggle/
-!chmod 600 ~/.kaggle/kaggle.json
-
-# Download the dataset
-!kaggle datasets download -d sid321axn/malicious-urls-dataset
-
-import zipfile
-
-# Specify the path to the zip file
-zip_file_path = '/content/malicious-urls-dataset.zip'
-
-# Specify the directory to extract the contents to
-extract_dir = '/content/malicious-urls-dataset'
-
-# Unzip the file
-with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
-    zip_ref.extractall(extract_dir)
-
-print("Extraction complete.")
-
-df = pd.read_csv('/content/malicious-urls-dataset/malicious_phish.csv')
+df = pd.read_csv("malicious_phish.csv")
 print(df.shape)
 df.head()
 
@@ -57,13 +31,13 @@ df_mal = df[df.type=='malware']
 df_deface = df[df.type=='malface']
 df_benign = df[df.type=='benign']
 
-phish_url = " ".join(i for i in df_phish.url)
+'''phish_url = " ".join(i for i in df_phish.url)
 wc = WordCloud(width = 1600, height = 800, colormap="Paired").generate(phish_url)
 plt.figure(figsize = (12,14), facecolor = 'k')
 plt.imshow(wc, interpolation = 'bilinear')
 plt.axis('off')
 plt.tight_layout(pad=0)
-plt.show()
+plt.show()'''
 
 import re
 def has_ip(url):
@@ -230,7 +204,7 @@ df['count-letters']= df['url'].apply(lambda i: letter_count(i))
 
 df.head()
 
-!pip install tld
+
 
 #Importing dependencies
 from urllib.parse import urlparse
@@ -259,13 +233,13 @@ def tld_length(tld):
 
 df['tld_length'] = df['tld'].apply(lambda i: tld_length(i))
 
-df = df.drop("tld",1)
+df = df.drop("tld",axis=1)
 
 df.columns
 
 df['type'].value_counts()
 
-import seaborn as sns
+'''import seaborn as sns
 sns.set(style="darkgrid")
 ax = sns.countplot(y="type", data=df,hue="use_of_ip")
 
@@ -300,7 +274,7 @@ sns.set(style="darkgrid")
 ax = sns.catplot(x="type", y="fd_length", kind="box", data=df)
 
 sns.set(style="darkgrid")
-ax = sns.catplot(x="type", y="tld_length", kind="box", data=df)
+ax = sns.catplot(x="type", y="tld_length", kind="box", data=df)'''
 
 from sklearn.preprocessing import LabelEncoder
 
@@ -341,7 +315,7 @@ X_train_resampled, y_train_resampled = smote.fit_resample(X_train, y_train)
 
 y_train
 
-"""Random Forest Classifier"""
+'''"""Random Forest Classifier"""
 
 # Import the module
 import sklearn.metrics as metrics
@@ -443,7 +417,7 @@ correlation_matrix = df_concat.corr()
 plt.figure(figsize=(12, 10))
 sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
 plt.title('Correlation Heatmap')
-plt.show()
+plt.show()'''
 
 X_update = X_train.drop(["count-digits","fd_length","sus_url","count%","count@"], axis="columns")
 
