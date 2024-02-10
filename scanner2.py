@@ -1,8 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 import joblib
-import numpy as np
-import pandas as pd
 from model2 import main, get_prediction_from_url
 
 # Load the trained model
@@ -24,8 +22,8 @@ def extract_links(url):
 def classify_links(links):
     malicious_links = []
     for link in links:
-        prediction = get_prediction_from_url(link)
-        if prediction == "MALWARE":
+        prediction =get_prediction_from_url([link])
+        if prediction == 1:
             malicious_links.append(link)
     return malicious_links
 
