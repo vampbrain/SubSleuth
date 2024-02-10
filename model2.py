@@ -424,7 +424,7 @@ plt.show()
 feat_importances = pd.Series(xgb_c.feature_importances_, index=X_train.columns)
 feat_importances.sort_values().plot(kind="barh",figsize=(10, 6))
 
-!pip install tensorflow
+
 
 X_train
 
@@ -479,40 +479,7 @@ batch_size = 32
 
 """Prediction"""
 
-def main(url):
 
-    status = []
-
-    status.append(has_ip(url))
-    status.append(abnormal(url))
-    status.append(count_dot(url))
-    status.append(count_www(url))
-    status.append(count_atrate(url))
-    status.append(no_of_dir(url))
-    status.append(no_of_embed(url))
-
-    status.append(shortening_service(url))
-    status.append(count_https(url))
-    status.append(count_http(url))
-
-    status.append(count_ques(url))
-    status.append(count_hyphen(url))
-    status.append(count_equal(url))
-
-    status.append(url_length(url))
-    status.append(hostname_length(url))
-    status.append(suspicious_words(url))
-    status.append(digit_count(url))
-    status.append(letter_count(url))
-    status.append(fd_length(url))
-    tld = get_tld(url,fail_silently=True)
-
-    status.append(tld_length(tld))
-
-
-
-
-    return status
 
 def main(url):
 
@@ -545,31 +512,7 @@ def main(url):
 
     return status
 
-def get_prediction_from_url(test_url):
-    features_test = main(test_url)
-    # Due to updates to scikit-learn, we now need a 2D array as a parameter to the predict function.
-    features_test = np.array(features_test).reshape((1, -1))
 
-
-
-    pred = model.predict(features_test)
-    print(pred)
-    if int(pred[0]) == 0:
-
-        res="SAFE"
-        return res
-    elif int(pred[0]) == 1.0:
-
-        res="DEFACEMENT"
-        return res
-    elif int(pred[0]) == 2.0:
-        res="PHISHING"
-        return res
-
-    elif int(pred[0]) == 3.0:
-
-        res="MALWARE"
-        return res
 
 from sklearn.linear_model import Perceptron
 model1 = Perceptron()
