@@ -19,34 +19,13 @@ import os
 import seaborn as sns
 from wordcloud import WordCloud
 from imblearn.over_sampling import SMOTE
+import warnings
 
-# Upload Kaggle API Key
-from google.colab import files
-files.upload()
+# Suppress FutureWarnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
-# Move the API key to the correct location
-!mkdir -p ~/.kaggle
-!mv kaggle.json ~/.kaggle/
-!chmod 600 ~/.kaggle/kaggle.json
 
-# Download the dataset
-!kaggle datasets download -d sid321axn/malicious-urls-dataset
-
-import zipfile
-
-# Specify the path to the zip file
-zip_file_path = '/content/malicious-urls-dataset.zip'
-
-# Specify the directory to extract the contents to
-extract_dir = '/content/malicious-urls-dataset'
-
-# Unzip the file
-with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
-    zip_ref.extractall(extract_dir)
-
-print("Extraction complete.")
-
-df = pd.read_csv('/content/malicious-urls-dataset/malicious_phish.csv')
+df = pd.read_csv("malicious_phish.csv")
 print(df.shape)
 df.head()
 
@@ -230,8 +209,6 @@ df['count-letters']= df['url'].apply(lambda i: letter_count(i))
 
 df.head()
 
-!pip install tld
-
 #Importing dependencies
 from urllib.parse import urlparse
 from tld import get_tld
@@ -259,25 +236,35 @@ def tld_length(tld):
 
 df['tld_length'] = df['tld'].apply(lambda i: tld_length(i))
 
-df = df.drop("tld",1)
-
-df.columns
-
-df['type'].value_counts()
-
 import seaborn as sns
+df = df.drop("tld", axis=1)
+
+# df.columns
+
+# df['type'].value_counts()
+
+# Assuming 'type' and 'use_of_ip' are integer columns, convert them to strings
+df['type'] = df['type'].astype(str)
+
+df['use_of_ip'] = df['use_of_ip'].astype(str)
 sns.set(style="darkgrid")
 ax = sns.countplot(y="type", data=df,hue="use_of_ip")
 
+ax.legend(loc="best", title="use_of_ip")
+
+df['abnormal_url'] = df['abnormal_url'].astype(str)
 sns.set(style="darkgrid")
 ax = sns.countplot(y="type", data=df,hue="abnormal_url")
 
+df['google_index'] = df['google_index'].astype(str)
 sns.set(style="darkgrid")
 ax = sns.countplot(y="type", data=df,hue="google_index")
 
+df['short_url'] = df['short_url'].astype(str)
 sns.set(style="darkgrid")
 ax = sns.countplot(y="type", data=df,hue="short_url")
 
+df['sus_url'] = df['sus_url'].astype(str)
 sns.set(style="darkgrid")
 ax = sns.countplot(y="type", data=df,hue="sus_url")
 
@@ -340,110 +327,6 @@ smote = SMOTE(random_state=42)
 X_train_resampled, y_train_resampled = smote.fit_resample(X_train, y_train)
 
 y_train
-
-"""Random Forest Classifier"""
-
-# Import the module
-import sklearn.metrics as metrics
-from sklearn.ensemble import RandomForestClassifier
-rf = RandomForestClassifier(n_estimators=1,max_features='sqrt')
-rf.fit(X_train_resampled,y_train_resampled)
-y_pred_rf = rf.predict(X_test)
-print(classification_report(y_test,y_pred_rf,target_names=['benign', 'defacement','phishing','malware']))
-
-score = metrics.accuracy_score(y_test, y_pred_rf)
-print("accuracy:   %0.3f" % score)
-
-# Calculate and print the accuracy score
-score = metrics.accuracy_score(y_test, y_pred_rf)
-print("accuracy:   %0.3f" % score)
-
-cm = confusion_matrix(y_test, y_pred_rf)
-cm_df = pd.DataFrame(cm,
-                     index = ['benign', 'defacement','phishing','malware'],
-                     columns = ['benign', 'defacement','phishing','malware'])
-plt.figure(figsize=(8,6))
-sns.heatmap(cm_df, annot=True,fmt=".1f")
-plt.title('Confusion Matrix')
-plt.ylabel('Actal Values')
-plt.xlabel('Predicted Values')
-plt.show()
-
-feat_importances = pd.Series(rf.feature_importances_, index=X_train.columns)
-feat_importances.sort_values().plot(kind="barh",figsize=(10, 6))
-
-"""Light GBM"""
-
-lgb = LGBMClassifier(objective='multiclass',boosting_type= 'gbdt',n_jobs = 5,
-          silent = True, random_state=5)
-LGB_C = lgb.fit(X_train_resampled, y_train_resampled)
-
-
-y_pred_lgb = LGB_C.predict(X_test)
-print(classification_report(y_test,y_pred_lgb,target_names=['benign', 'defacement','phishing','malware']))
-
-score = metrics.accuracy_score(y_test, y_pred_lgb)
-print("accuracy:   %0.3f" % score)
-
-cm = confusion_matrix(y_test, y_pred_lgb)
-cm_df = pd.DataFrame(cm,
-                     index = ['benign', 'defacement','phishing','malware'],
-                     columns = ['benign', 'defacement','phishing','malware'])
-plt.figure(figsize=(8,6))
-sns.heatmap(cm_df, annot=True,fmt=".1f")
-plt.title('Confusion Matrix')
-plt.ylabel('Actal Values')
-plt.xlabel('Predicted Values')
-plt.show()
-
-feat_importances = pd.Series(lgb.feature_importances_, index=X_train.columns)
-feat_importances.sort_values().plot(kind="barh",figsize=(10, 6))
-
-"""XGBoost"""
-
-xgb_c = xgb.XGBClassifier(n_estimators= 100)
-xgb_c.fit(X_train_resampled,y_train_resampled)
-y_pred_x = xgb_c.predict(X_test)
-print(classification_report(y_test,y_pred_x,target_names=['benign', 'defacement','phishing','malware']))
-
-
-score = metrics.accuracy_score(y_test, y_pred_x)
-print("accuracy:   %0.3f" % score)
-
-cm = confusion_matrix(y_test, y_pred_x)
-cm_df = pd.DataFrame(cm,
-                     index = ['benign', 'defacement','phishing','malware'],
-                     columns = ['benign', 'defacement','phishing','malware'])
-plt.figure(figsize=(8,6))
-sns.heatmap(cm_df, annot=True,fmt=".1f")
-plt.title('Confusion Matrix')
-plt.ylabel('Actal Values')
-plt.xlabel('Predicted Values')
-plt.show()
-
-feat_importances = pd.Series(xgb_c.feature_importances_, index=X_train.columns)
-feat_importances.sort_values().plot(kind="barh",figsize=(10, 6))
-
-
-
-X_train
-
-y_train
-
-import seaborn as sns
-import matplotlib.pyplot as plt
-
-# Concatenate the features and target variable
-df_concat = pd.concat([X_train, y_train], axis=1)
-
-# Calculate the correlation matrix
-correlation_matrix = df_concat.corr()
-
-# Plot the heatmap
-plt.figure(figsize=(12, 10))
-sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
-plt.title('Correlation Heatmap')
-plt.show()
 
 X_update = X_train.drop(["count-digits","fd_length","sus_url","count%","count@"], axis="columns")
 
