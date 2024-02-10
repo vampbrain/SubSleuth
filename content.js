@@ -6,4 +6,17 @@ chrome.runtime.onMessage.addListener(
       }
     }
   );
-  
+// Function to collect links on the page
+function collectLinks() {
+  const links = Array.from(document.querySelectorAll('a[href]')).map(a => a.href);
+  return links;
+}
+
+// Listen for messages from the extension
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'collectLinks') {
+      const links = collectLinks();
+      // Send the collected links back to the extension
+      sendResponse({ links: links });
+  }
+});
