@@ -12,12 +12,12 @@ function copyUrl() {
   });
 }
 
-function analyzeLinks() {
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    var activeTab = tabs[0];
-    chrome.tabs.sendMessage(activeTab.id, { action: 'analyzeLinks' });
-  });
-}
+//function analyzeLinks() {
+//  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+//    var activeTab = tabs[0];
+//    chrome.tabs.sendMessage(activeTab.id, { action: 'analyzeLinks' });
+//  });
+//}
 
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
@@ -26,3 +26,23 @@ chrome.runtime.onMessage.addListener(
     }
   }
 );
+function analyzeLinks() {
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      var activeTab = tabs[0];
+      chrome.scripting.executeScript({
+          target: { tabId: activeTab.id },
+          files: ['content.js']
+      }).then(() => {
+          // Script injected, now send a message to collect links
+          chrome.tabs.sendMessage(activeTab.id, { action: 'collectLinks' }, function (response) {
+              // Handle response containing links
+              if (response && response.links) {
+                  console.log('Links:', response.links);
+                  // You can further process the links here
+              }
+          });
+      }).catch(err => {
+          console.error('Failed to inject script:', err);
+      });
+  });
+}
