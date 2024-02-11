@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-  document.getElementById('analyzeButton').addEventListener('click', analyzeLinks);
+  document.getElementById('Analyse').addEventListener('click', analyzeLinks);
   document.getElementById('copyUrlButton').addEventListener('click', copyUrl);
 });
 
