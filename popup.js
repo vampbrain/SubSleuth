@@ -26,6 +26,14 @@ function sendUrlToServer(url) {
       // Print the two values received from the server
       console.log('Result 1:', data.result1);
       console.log('Result 2:', data.result2);
+      if (data.result2 === 'Misleading labeling') {
+        document.getElementById('result').innerText = data.result2;
+        document.getElementById('desc').innerHTML="A misleading label is false or deceptive information on a product, leading consumers to misunderstand its qualities or attributes.";
+        document.getElementById("result2").innerText='Most Frequent Sentiment Label: '+ data.result1;
+      } 
+      else {
+        document.getElementById('result').innerText = 'Request failed!';
+      }
   })
   .catch(error => {
       console.error('Error:', error);
