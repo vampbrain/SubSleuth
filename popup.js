@@ -1,15 +1,47 @@
 document.addEventListener('DOMContentLoaded', function () {
-  document.getElementById('Analyse').addEventListener('click', analyzeLinks);
+  document.getElementById('analyseButton').addEventListener('click', function(){
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      var activeTab = tabs[0];
+      url_u=activeTab.url
+      console.log(url_u);
+      sendUrlToServer(url_u);
+    });
+   
+    analyzeLinks();
+    highlightKeywords();
+  });
   document.getElementById('copyUrlButton').addEventListener('click', copyUrl);
 });
-
+function sendUrlToServer(url) {
+  fetch('http://localhost:5000/urlget', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ url: url })
+  })
+  .then(response => response.json())
+  .then(data => {
+      console.log('Received response from server:', data);
+      // Print the two values received from the server
+      console.log('Result 1:', data.result1);
+      console.log('Result 2:', data.result2);
+  })
+  .catch(error => {
+      console.error('Error:', error);
+  });
+}
 
 
 function copyUrl() {
+  var url_u;
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     var activeTab = tabs[0];
-    console.log(activeTab.url);
+    url_u=activeTab.url
+    console.log(url_u);
+    
   });
+  return url_u;
 }
 
 //function analyzeLinks() {
@@ -26,6 +58,8 @@ chrome.runtime.onMessage.addListener(
     }
   }
 );
+
+
 function analyzeLinks() {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       var activeTab = tabs[0];
@@ -44,5 +78,27 @@ function analyzeLinks() {
       }).catch(err => {
           console.error('Failed to inject script:', err);
       });
+
   });
+  
+}
+function highlightKeywords() {
+  var keywords = ["limited time offer", "act now", "hurry up", "limited offer", "deal of the day", "time-limited", "last chance", "up to", "off", "upto"];
+  var bodyText = document.body.innerHTML;
+  for (var i = 0; i < keywords.length; i++) {
+    var keywordRegex = new RegExp("\\b(" + keywords[i] + ")\\b", "gi");
+    var matches = bodyText.match(keywords);
+    if (matches) {
+      for (var j = 0; j < matches.length; j++) {
+        var keyword = matches[j];
+        var span = document.createElement("span");
+        span.style.backgroundColor = "yellow";
+        span.style.padding = "2px";
+        span.textContent = keyword;
+        var range = document.createRange();
+        range.selectNode(document.body.querySelector("*").contains(matches[j]));
+        range.surroundContents(span);
+      }
+    }
+  }
 }
