@@ -41,11 +41,12 @@ def having_ip_address(url):
         # print 'No matching pattern found'
         return 1
 
-def get_prediction(url, model_path):
-    print("Loading the model...")
+def get_prediction(url):
+    model_path = "Caffeine_Prediction.h5"
+    # print("Loading the model...")
     model = keras.models.load_model(model_path)
 
-    print("Extracting features from url...")
+    # print("Extracting features from url...")
     l=[]
     l.append(len(urlparse(url).netloc))
     l.append(len(urlparse(url).path))
@@ -66,14 +67,14 @@ def get_prediction(url, model_path):
 
 
     url_features = l
-    print(url_features)
+    # print(url_features)
 
-    print("Making prediction...")
+    # print("Making prediction...")
     prediction = model.predict([url_features])
 
     probability = prediction[0][0] * 100
     probability = round(probability, 3)
-    print("There is a", probability, "% chance that the URL is malicious.")
+    # print("There is a", probability, "% chance that the URL is malicious.")
 
     # Classify as malicious if probability exceeds the threshold
     if probability >= threshold:
@@ -85,5 +86,5 @@ def get_prediction(url, model_path):
 model_path = "Caffeine_Prediction.h5"
 url = "https://metumaskilogin.godaddysites.com/"
 # url="www.google.com"
-result = get_prediction(url, model_path)
-print("URL is:", result)
+result = get_prediction(url)
+print(url," is:", result)
