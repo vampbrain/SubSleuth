@@ -55,7 +55,7 @@ def detect_dark_patterns(text):
     dark_patterns = []
 
     # Define keywords related to false urgency
-    false_urgency_keywords = ["limited time offer", "act now", "hurry up", "limited offer", "deal of the day", "time-limited", "last chance", "up to", "off", "upto"]
+    false_urgency_keywords = ["limited time offer", "act now","Shop now", "hurry up", "limited offer", "deal of the day", "time-limited", "last chance", "up to", "off", "upto"]
 
     # Define keywords related to misleading labeling
     misleading_labeling_keywords = ["free", "subscription", "trial", "only", "exclusive", "limited edition", "special offer", "discount"]
