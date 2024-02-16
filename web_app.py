@@ -1,27 +1,17 @@
-# web_app.py
 from flask import Flask, request, jsonify
-from model import classify_links, extract_links
+from nlp import urlget
 
 app = Flask(__name__)
 
-@app.route('/scan', methods=['POST'])
-def scan_url():
+@app.route('/urlget', methods=['POST'])
+def get_url():
     data = request.get_json()
     url = data.get('url', '')
 
-    if not url:
-        return jsonify({'error': 'Invalid request'}), 400
-
-    links = extract_links(url)
-    malicious_links, subscription_links = classify_links(links)
-
-    result = {
-        'url': url,
-        'malicious_links': malicious_links,
-        'subscription_links': subscription_links
-    }
-
-    return jsonify(result)
+    # Call the urlget function with the received URL
+    result1, result2 = urlget(url)
+    
+    return jsonify({'result1': result1, 'result2': result2})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
