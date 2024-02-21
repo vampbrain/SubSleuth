@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
       url_u=activeTab.url
       console.log(url_u);
       sendUrlToServer(url_u);
+      analyzeUrl(url_u);
     });
     analyzeLinks();
     highlightKeywords();
@@ -15,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   document.getElementById('copyUrlButton').addEventListener('click', copyUrl);
 });
+
 function sendUrlToServer(url) {
   fetch('http://localhost:5000/urlget', {
       method: 'POST',
@@ -120,12 +122,13 @@ function sendUrlToServer(url) {
         line1.style.fontWeight = 'bold';
 
         // Set marginBottom for each line to create padding
+        line1.style.marginTop='15px';
         line1.style.marginBottom = '10px'; // Adjust the value as needed
         line2.style.marginBottom = '10px'; // Adjust the value as needed
-        line3.style.marginBottom = '10px'; // Adjust the value as needed
+        line3.style.marginBottom = '15px'; // Adjust the value as needed
 
         // Get the container element where you want to append the lines
-        var container = document.getElementById('container'); // Replace 'container' with the actual ID of your container
+        var container = document.getElementById('content'); // Replace 'container' with the actual ID of your container
 
         // Append the lines to the container
         container.appendChild(line1);
@@ -160,7 +163,7 @@ function sendUrlToServer(url) {
 
         // Add event listeners
         redButton.addEventListener('click', function() {
-            history.back(); // Navigate back when the first button is clicked
+            window.history.back(); // Navigate back when the first button is clicked
         });
 
         blackButton.addEventListener('click', function() {
@@ -170,13 +173,134 @@ function sendUrlToServer(url) {
 
       }
       else {
-        document.getElementById('result').innerText = 'Request failed!';
+        var line1 = document.createElement('div');
+        var line2 = document.createElement('div');
+        var line3 = document.createElement('div');
+
+        // Set text content for each line
+        line1.textContent = 'NO Dark Patten Detected!';
+        line3.textContent = 'Most Frequent Sentiment Label: Neutral';
+
+        // Apply Inter font to all lines
+        var interFont = 'Inter, sans-serif';
+        line1.style.fontFamily = interFont;
+        line2.style.fontFamily = interFont;
+        line3.style.fontFamily = interFont;
+
+        // Apply bold font weight to the first line
+        line1.style.fontWeight = 'bold';
+
+        // Set marginBottom for each line to create padding
+        line1.style.marginTop='15px';
+        line1.style.marginBottom = '10px'; // Adjust the value as needed
+        line2.style.marginBottom = '10px'; // Adjust the value as needed
+        line3.style.marginBottom = '15px'; // Adjust the value as needed
+
+        // Get the container element where you want to append the lines
+        var container = document.getElementById('content'); // Replace 'container' with the actual ID of your container
+
+        // Append the lines to the container
+        container.appendChild(line1);
+        container.appendChild(line2);
+        container.appendChild(line3);
+
+        var redButton = document.createElement('button');
+        redButton.textContent = 'Go Back'; // Set text for the first button
+        redButton.style.backgroundColor = '#E51A1A'; // Use the specified color code
+        redButton.style.color = 'white';
+        redButton.style.borderRadius = '8px';
+        redButton.style.marginRight = '10px';
+        redButton.style.padding = '8px 20px'; // Add padding to the button
+        redButton.style.fontSize = '13px';  // Add curvature to the button
+        redButton.style.fontFamily = 'Inter, sans-serif'; // Use Inter font
+        redButton.style.fontWeight = 'bold';
+        var blackButton = document.createElement('button');
+        blackButton.textContent = 'Proceed Anyway'; // Set text for the second button
+        blackButton.style.backgroundColor = '#472424'; // Use the specified color code
+        blackButton.style.color = 'white';
+        blackButton.style.borderRadius = '8px'; // Add curvature to the button
+        blackButton.style.padding = '8px 20px'; // Add padding to the button
+        blackButton.style.fontSize = '13px'; // Increase font size
+        blackButton.style.fontFamily = 'Inter, sans-serif'; // Use Inter font
+        blackButton.style.fontWeight = 'bold';
+        // Create container
+        var buttonContainer = document.getElementById('buttonContainer');
+
+        // Append buttons to container
+        buttonContainer.appendChild(redButton);
+        buttonContainer.appendChild(blackButton);
+
+        // Add event listeners
+        redButton.addEventListener('click', function() {
+            window.history.back(); // Navigate back when the first button is clicked
+        });
+
+        blackButton.addEventListener('click', function() {
+            // Close the extension popup when the second button is clicked
+            window.close();
+        });
       }
   })
   .catch(error => {
       console.error('Error:', error);
   });
 }
+function analyzeUrl(url) {
+  // Create request body with URL as data
+  fetch('http://localhost:5000/check', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ url: url })
+  })
+  .then(response => response.json())
+  .then(data => {
+      // Process the result returned from Flask
+      const result = data.result;
+
+        // Get the HTML element to display the result
+        const resultElement = document.getElementById('result');
+
+        // Update the result element based on the result
+        if (data.result) {
+            // If the result is true, display a warning
+            resultElement.innerHTML = "<strong style='padding-top: 10px ;'>This website might push you into subscription trickery.</strong>";
+            resultElement.style.paddingTop = '10px'; // You can adjust the value as needed
+            resultElement.style.paddingBottom = '10px';
+          } else {
+            // If the result is false, display a message indicating no issue
+            resultElement.innerHTML = "<strong style='padding-top: 10px 0;'>This website doesnt have subscription trickery.</strong>";
+            resultElement.style.paddingTop = '10px'; // You can adjust the value as needed
+            resultElement.style.paddingBottom = '10px';
+        }
+  })
+  .catch(error => {
+      console.error('Error:', error);
+  });
+}
+function maliLinks(links) {
+  // Prepare the request body
+  var requestBody = JSON.stringify({ links: links });
+
+  // Fetch the data
+  fetch('http://localhost:5000/predict', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: requestBody
+  })
+  .then(response => response.json())
+  .then(data => {
+      // Process the result returned from Flask
+      console.log('Result:', data.malicious_links);
+  })
+  .catch(error => {
+      console.error('Error:', error);
+  });
+}
+
 // Function to highlight keywords in the active tab
 function highlightKeywordsInActiveTab() {
   // List of keywords to search for
@@ -269,6 +393,8 @@ function analyzeLinks() {
               // Handle response containing links
               if (response && response.links) {
                   console.log('Links:', response.links);
+                  maliLinks(response.links);
+
                   // You can further process the links here
               }
           });

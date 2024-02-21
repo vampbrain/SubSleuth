@@ -84,7 +84,14 @@ def get_prediction(url):
 
 # Example usage:
 model_path = "Caffeine_Prediction.h5"
-url = "https://metumaskilogin.godaddysites.com/"
-# url="www.google.com"
-result = get_prediction(url)
-print(url," is:", result)
+def predict(l):
+    mali=[]
+    for i in l:
+        s=i.replace('http://','')
+        result = get_prediction(s)
+        if result=="Malicious":
+            mali.append(i)
+        else:
+            pass
+    return mali
+

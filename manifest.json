@@ -5,7 +5,11 @@
   "permissions": [
     "tabs",
     "activeTab",
-    "scripting"
+    "scripting",
+    "declarativeContent",
+    "storage",
+    "webNavigation",
+    "history"
   ],
   "action": {
     "default_popup": "popup.html",
@@ -31,4 +35,5 @@
       "matches": ["<all_urls>"]
     }
   ]
+  
 }

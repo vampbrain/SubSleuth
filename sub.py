@@ -29,7 +29,7 @@ import xgboost as xgb
 
 # Feature Engineering
 # Define the list of substrings to check for
-substrings = ["subscribe", "login", "signin", "signup", "join"]
+substrings = ["subscribe", "login", "signin", "signup", "join","unsubscribe"]
 
 # Function to check if any of the substrings are present in the URL
 def check_substrings(url):
@@ -61,15 +61,17 @@ accuracy = accuracy_score(y_test, y_pred)
 print(f"Model Accuracy: {accuracy}")
 
 # Predict on New URLs
-new_urls = ['https://sso.rajasthan.gov.in/signin', 'https://example.com/', 'https://example.com/news']
-new_X = vectorizer.transform(new_urls)
-predictions = model.predict(new_X)
-
-# Print Prediction Results for New URLs
-for url, prediction in zip(new_urls, predictions):
-    if prediction == 1:
-        print(f"{url} is a subscription link")
-    else:
-        print(f"{url} is not a subscription link")
-
-
+def check(ul):
+    new_urls = []
+    new_urls.append(ul)
+    new_X = vectorizer.transform(new_urls)
+    predictions = model.predict(new_X)
+    # Print Prediction Results for New URLs
+    for url, prediction in zip(new_urls, predictions):
+        if prediction == 1:
+            return True
+        else:
+            print(f"{url} is not a subscription link")
+            return False
+r=check('https://www.amazon.in/ap/signin?openid.pape.max_auth_age=0&openid.return_to=https%3A%2F%2Feu.primevideo.com%2Fauth%2Freturn%2Fref%3Dav_auth_ap%3F_t%3Dsgya-K3TNw1ubTS5mwZVuiXu4e6xpx2PPHgpq1rzWQXE0AAAAAQAAAABlz5nBcmF3AAAAAPgWC9WfHH8iB-olH_E9xQ%26location%3D%2Fdetail%2FLogin%2F0HBWDH95AN3UG2SX0M4YXRQ80W%3Fref_%253Datv_unknown&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&accountStatusPolicy=P1&openid.assoc_handle=amzn_prime_video_sso_in&openid.mode=checkid_setup&siteState=259-1074053-3776640&language=en_US&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0')
+print(r)
