@@ -29,7 +29,7 @@ import xgboost as xgb
 
 # Feature Engineering
 # Define the list of substrings to check for
-substrings = ["subscribe", "login", "signin", "signup", "join","unsubscribe"]
+substrings = ["subscribe", "login", "signin", "signup", "join","unsubscribe", "join now", "now"]
 
 # Function to check if any of the substrings are present in the URL
 def check_substrings(url):
