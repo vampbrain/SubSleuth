@@ -111,16 +111,4 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 // content.js
 
 // Function to intercept link clicks
-function interceptLinks(event) {
-  // Prevent the default action of the link click
-  event.preventDefault();
-
-  // Show the warning page in the extension
-  chrome.runtime.sendMessage({ action: 'showWarningPage' });
-}
-
-// Add click event listeners to all links on the page
-document.querySelectorAll('a').forEach(link => {
-  link.addEventListener('click', interceptLinks);
-});
 
